@@ -1,7 +1,7 @@
 {
     "name": "Vcpkg Tool",
     "id": "vcpkg",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "description": "A vcpkg tool feature",
     "options": {
         "username": {
@@ -16,6 +16,15 @@
             "default": "automatic",
             "description": "Enter name of a non-root user to configure or none to skip"
         },
+        "version": {
+            "type": "string",
+            "proposals": [
+                "stable",
+                "latest"
+            ],
+            "default": "stable",
+            "description": "Enter vcpkg version tag or stable or latest"
+        },
         "vcpkgroot": {
             "type": "string",
             "proposals": [
@@ -23,7 +32,7 @@
                 "automatic"
             ],
             "default": "automatic",
-            "description": "Enter VCPKGROOT for non-root user"
+            "description": "Enter VCPKGROOT as vcpkg root path"
         },
         "vcpkgdownload": {
             "type": "string",
@@ -32,7 +41,7 @@
                 "automatic"
             ],
             "default": "automatic",
-            "description": "Enter VCPKGDOWNLOAD for non-root user"
+            "description": "Enter VCPKGDOWNLOAD as vcpkg download path"
         }
     }
 }

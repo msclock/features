@@ -14,6 +14,7 @@ SETCOLOR_WARNING="echo -en \\E[1;33m"
 USERNAME=${USERNAME:-"vscode"}
 VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
+VERSION="${VERSION:-"stable"}"
 
 # Set vcpkg root on automatic
 if [ "${USERNAME}" = "none" ] || [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
@@ -83,25 +84,43 @@ check_packages build-essential tar curl zip unzip pkg-config bash-completion nin
 
 # Setup group and add user
 umask 0002
-if ! < /etc/group grep -e "^vcpkg:" >/dev/null 2>&1; then
+if ! grep </etc/group -e "^vcpkg:" >/dev/null 2>&1; then
     groupadd -r "vcpkg"
 fi
 usermod -a -G "vcpkg" "${USERNAME}"
 
 # Start Installation
 # Clone repository with ports and installer
+if [ -d "${VCPKG_ROOT}" ]; then
+    $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..."
+    rm -rf "${VCPKG_ROOT}"
+fi
 mkdir -p "${VCPKG_DOWNLOADS}"
-if [ ! -d "${VCPKG_ROOT}" ]; then
-    mkdir -p "${VCPKG_ROOT}"
-    git clone --depth=1 \
-        -c core.eol=lf \
-        -c core.autocrlf=false \
-        -c fsck.zeroPaddedFilemode=ignore \
-        -c fetch.fsck.zeroPaddedFilemode=ignore \
-        -c receive.fsck.zeroPaddedFilemode=ignore \
-        https://github.com/microsoft/vcpkg "${VCPKG_ROOT}"
+mkdir -p "${VCPKG_ROOT}"
+
+clone_args=(--depth=1
+    -c core.eol=lf
+    -c core.autocrlf=false
+    -c fsck.zeroPaddedFilemode=ignore
+    -c fetch.fsck.zeroPaddedFilemode=ignore
+    -c receive.fsck.zeroPaddedFilemode=ignore
+    https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
+
+# Setup vcpkg actual version
+if [ "${VERSION}" = "stable" ]; then
+    api_info=$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)
+    vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
+    git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
+elif [ "${VERSION}" == "latest" ]; then
+    git clone "${clone_args[@]}"
 else
-    $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}."
+    tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
+    if echo "$tags" | grep "${VERSION}" >/dev/null 2>&1; then
+        echo "Get valid tag" "${VRESION}"
+        git clone -b "${VERSION}" "${clone_args[@]}"
+    else
+        $SETCOLOR_FAILURE && echo -e 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
+    fi
 fi
 ## Run installer to get latest stable vcpkg binary
 ## https://github.com/microsoft/vcpkg/blob/7e7dad5fe20cdc085731343e0e197a7ae655555b/scripts/bootstrap.sh#L126-L144
