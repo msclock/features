@@ -14,7 +14,7 @@ SETCOLOR_WARNING="echo -en \\E[1;33m"
 USERNAME=${USERNAME:-"vscode"}
 VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
-VERSION="${VERSION:-"stable"}"
+VCPKG_VERSION="${VCPKG_VERSION:-"stable"}"
 
 # Set vcpkg root on automatic
 if [ "${USERNAME}" = "none" ] || [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
@@ -106,24 +106,24 @@ clone_args=(--depth=1
     -c receive.fsck.zeroPaddedFilemode=ignore
     https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
 
-echo VERSION "$VERSION"
+echo VCPKG_VERSION "$VCPKG_VERSION"
 # Setup vcpkg actual version
-if [ "${VERSION}" = "stable" ]; then
+if [ "${VCPKG_VERSION}" = "stable" ]; then
     api_info=$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)
     vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
-    echo "$VERSION" "$vcpkg_actual_version"
-elif [ "${VERSION}" = "latest" ]; then
+    echo "$VCPKG_VERSION" "$vcpkg_actual_version"
+elif [ "${VCPKG_VERSION}" = "latest" ]; then
     git clone "${clone_args[@]}"
-    echo "$VERSION"
+    echo "$VCPKG_VERSION"
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
 
     echo tags "$tags"
-    if echo "${tags}" | grep "${VERSION}" >/dev/null 2>&1; then
+    if echo "${tags}" | grep "${VCPKG_VERSION}" >/dev/null 2>&1; then
         echo "Get valid tag" "${VRESION}"
-        git clone -b "${VERSION}" "${clone_args[@]}"
-        echo "$VERSION"
+        git clone -b "${VCPKG_VERSION}" "${clone_args[@]}"
+        echo "$VCPKG_VERSION"
     else
         echo 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
     fi
