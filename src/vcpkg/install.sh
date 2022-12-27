@@ -106,6 +106,7 @@ clone_args=(--depth=1
     -c receive.fsck.zeroPaddedFilemode=ignore
     https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
 
+echo $VERSION
 # Setup vcpkg actual version
 if [ "${VERSION}" = "stable" ]; then
     api_info=$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)
