@@ -111,15 +111,18 @@ if [ "${VERSION}" = "stable" ]; then
     api_info=$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)
     vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
+    echo "$VERSION" "$vcpkg_actual_version" 
 elif [ "${VERSION}" = "latest" ]; then
     git clone "${clone_args[@]}"
+    echo "$VERSION"
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
     if echo "$tags" | grep "${VERSION}" >/dev/null 2>&1; then
         echo "Get valid tag" "${VRESION}"
         git clone -b "${VERSION}" "${clone_args[@]}"
+        echo "$VERSION"
     else
-        $SETCOLOR_FAILURE && echo -e 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
+        echo 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
     fi
 fi
 ## Run installer to get latest stable vcpkg binary
