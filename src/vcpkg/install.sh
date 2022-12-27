@@ -107,7 +107,7 @@ clone_args=(--depth=1
     https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
 
 # Setup vcpkg actual version
-if [ "${VERSION}" = "stable" ]; then
+if [ "${VERSION}" == "stable" ]; then
     api_info=$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)
     vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
