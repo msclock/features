@@ -17,7 +17,7 @@ fi
 
 # Set vcpkg download on automatic 
 if [ "${VCPKG_DOWNLOADS}" = "auto" ] || [ "${VCPKG_DOWNLOADS}" = "automatic" ]; then
-    VCPKG_ROOT="/usr/local/vcpkg-downloads"
+    VCPKG_DOWNLOADS="/usr/local/vcpkg-downloads"
 fi
 
 # bionic and stretch pkg repos install cmake version < 3.15 which is required to run bootstrap-vcpkg.sh on ARM64 
