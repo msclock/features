@@ -13,12 +13,12 @@ A vcpkg tool feature
 
 ## Options
 
-| Options Id | Description | Type | Default Value |
-|-----|-----|-----|-----|
-| username | Enter name of a non-root user to configure or none to skip | string | automatic |
-| vcpkgroot | Enter VCPKGROOT as vcpkg root path | string | automatic |
-| vcpkgdownload | Enter VCPKGDOWNLOAD as vcpkg download path | string | automatic |
-| version | Enter vcpkg version tag or stable or latest | string | automatic |
+| Options Id    | Description                                                | Type   | Default Value |
+|---------------|------------------------------------------------------------|--------|---------------|
+| username      | Enter name of a non-root user to configure or none to skip | string | automatic     |
+| vcpkgroot     | Enter VCPKGROOT as vcpkg root path                         | string | automatic     |
+| vcpkgdownload | Enter VCPKGDOWNLOAD as vcpkg download path                 | string | automatic     |
+| version       | Enter vcpkg version tag or stable or latest                | string | automatic     |
 
 
 
