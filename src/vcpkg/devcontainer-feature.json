@@ -1,7 +1,7 @@
 {
     "name": "Vcpkg Tool",
     "id": "vcpkg",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "description": "A vcpkg tool feature",
     "options": {
         "username": {

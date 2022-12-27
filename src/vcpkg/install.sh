@@ -119,7 +119,6 @@ elif [ "${VCPKG_VERSION}" = "latest" ]; then
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
 
-    echo tags "$tags"
     if echo "${tags}" | grep "${VCPKG_VERSION}" >/dev/null 2>&1; then
         echo "Get valid tag" "${VRESION}"
         git clone -b "${VCPKG_VERSION}" "${clone_args[@]}"
