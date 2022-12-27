@@ -6,7 +6,7 @@
 
 set -e
 
-USERNAME=${1:-"vscode"}
+USERNAME=${USERNAME:-"vscode"}
 VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
 
