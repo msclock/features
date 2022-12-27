@@ -11,7 +11,7 @@ SETCOLOR_FAILURE="echo -en \\E[1;31m"
 SETCOLOR_WARNING="echo -en \\E[1;33m"
 # SETCOLOR_NORMAL="echo  -en \\E[0;39m"
 
-USERNAME=${USERNAME:-"vscode"}
+USERNAME="${USERNAME:-"vscode"}"
 VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
 VCPKG_VERSION="${VERSION:-"stable"}"
