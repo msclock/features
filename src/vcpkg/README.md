@@ -1,7 +1,7 @@
 
-# Vcpkg(vcpkg dev tool)
+# Vcpkg Tool (vcpkg)
 
-C++ Library Manager for Windows, Linux, and MacOS
+A vcpkg tool feature
 
 ## Example Usage
 
@@ -19,6 +19,8 @@ C++ Library Manager for Windows, Linux, and MacOS
 | vcpkgroot | Enter VCPKGROOT for non-root user | string | automatic |
 | vcpkgdownload | Enter VCPKGDOWNLOAD for non-root user | string | automatic |
 
+
+
 ---
 
-_Note: This file was auto-generated from the [devcontainer-feature.json](https://github.com/devcontainers/feature-starter/blob/main/src/hello/devcontainer-feature.json).  Add additional notes to a `NOTES.md`._
+_Note: This file was auto-generated from the [devcontainer-feature.json](https://github.com/msclock/features/blob/main/src/vcpkg/devcontainer-feature.json).  Add additional notes to a `NOTES.md`._
