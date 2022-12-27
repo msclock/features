@@ -6,9 +6,14 @@
 
 set -e
 
-USERNAME=${USERNAME:-"vscode"}
+USERNAME=${0:-"vscode"}
 VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
+
+# Set vcpkg root on automatic 
+if [ "${VCPKG_ROOT}" = "auto" ] || [ "${VCPKG_ROOT}" = "automatic" ]; then
+    VCPKG_ROOT="/usr/local/vcpkg"
+fi
 
 # Set vcpkg root on automatic 
 if [ "${VCPKG_ROOT}" = "auto" ] || [ "${VCPKG_ROOT}" = "automatic" ]; then
