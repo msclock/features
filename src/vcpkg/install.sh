@@ -14,7 +14,7 @@ SETCOLOR_WARNING="echo -en \\E[1;33m"
 USERNAME=${USERNAME:-"vscode"}
 VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
-VCPKG_VERSION="${VCPKG_VERSION:-"stable"}"
+VCPKG_VERSION="${VERSION:-"stable"}"
 
 # Set vcpkg root on automatic
 if [ "${USERNAME}" = "none" ] || [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
