@@ -11,12 +11,15 @@ A vcpkg tool feature
 }
 ```
 
+## OS Support
+This Feature should work on recent versions of Debian/Ubuntu, RedHat Enterprise Linux, Fedora, RockyLinux, and Alpine Linux.
+
 ## Options
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
 | username | Enter name of a non-root user to configure or none to skip | string | automatic |
-| version | Enter vcpkg version tag or stable or latest | string | stable |
+| vcpkgversion | Enter vcpkg version tag or stable or latest | string | stable |
 | vcpkgroot | Enter VCPKGROOT as vcpkg root path | string | /usr/local/vcpkg |
 | vcpkgdownload | Enter VCPKGDOWNLOAD as vcpkg download path | string | /usr/local/vcpkg-downloads |
 

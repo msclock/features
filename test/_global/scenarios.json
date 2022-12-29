@@ -1,5 +1,5 @@
 {
-    "all-tools": {
+    "all_tools": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "vcpkg": {}
