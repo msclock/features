@@ -11,9 +11,6 @@ A vcpkg tool feature
 }
 ```
 
-## OS Support
-This Feature should work on recent versions of Debian/Ubuntu, RedHat Enterprise Linux, Fedora, RockyLinux, and Alpine Linux.
-
 ## Options
 
 | Options Id | Description | Type | Default Value |
