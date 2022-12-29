@@ -53,8 +53,6 @@ updaterc() {
 apt_get_update_if_needed() {
     if [ ! -d "/var/lib/apt/lists" ] || [ "$(find /var/lib/apt/lists/* -prune -print | wc -l)" = "0" ]; then
         echo "Running apt-get update..."
-        cp /etc/apt/sources.list /etc/apt/sources.list.bak
-        sed -i '/^# deb/d;s|http://deb.debian.org/debian|http://mirrors.tencent.com/debian|g;/^deb http/s/$/ contrib non-free/;/-updates/h;s/-updates/-backports/;$G' /etc/apt/sources.list
         apt-get update
     else
         echo "Skipping apt-get update."
@@ -69,6 +67,7 @@ check_packages() {
     fi
 }
 
+export DEBIAN_FRONTEND=noninteractive
 
 # Install additional packages needed by vcpkg: https://github.com/microsoft/vcpkg/blob/master/README.md#installing-linux-developer-tools
 check_packages build-essential wget zip unzip pkg-config bash-completion ninja-build git
