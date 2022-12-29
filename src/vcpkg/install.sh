@@ -70,7 +70,7 @@ check_packages() {
 export DEBIAN_FRONTEND=noninteractive
 
 # Install additional packages needed by vcpkg: https://github.com/microsoft/vcpkg/blob/master/README.md#installing-linux-developer-tools
-check_packages build-essential wget curl zip unzip pkg-config bash-completion ninja-build git
+check_packages build-essential curl ca-certificates zip unzip pkg-config bash-completion ninja-build git
 
 # Setup group and add user
 umask 0002
@@ -91,7 +91,6 @@ mkdir -p "${VCPKG_ROOT}"
 clone_args=(--depth=1
     -c core.eol=lf
     -c core.autocrlf=false
-    -c http.sslverify=false
     -c fsck.zeroPaddedFilemode=ignore
     -c fetch.fsck.zeroPaddedFilemode=ignore
     -c receive.fsck.zeroPaddedFilemode=ignore
@@ -100,7 +99,7 @@ clone_args=(--depth=1
 echo VCPKG_VERSION "$VCPKG_VERSION"
 # Setup vcpkg actual version
 if [ "${VCPKG_VERSION}" = "stable" ]; then
-    api_info="`wget -qO- --no-check-certificate https://api.github.com/repos/microsoft/vcpkg/releases/latest`"
+    api_info="`curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest`"
     vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
     echo "$VCPKG_VERSION" "$vcpkg_actual_version"
