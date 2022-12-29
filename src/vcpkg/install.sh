@@ -91,6 +91,7 @@ mkdir -p "${VCPKG_ROOT}"
 clone_args=(--depth=1
     -c core.eol=lf
     -c core.autocrlf=false
+    -c http.sslverify=false
     -c fsck.zeroPaddedFilemode=ignore
     -c fetch.fsck.zeroPaddedFilemode=ignore
     -c receive.fsck.zeroPaddedFilemode=ignore
