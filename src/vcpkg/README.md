@@ -17,8 +17,8 @@ A vcpkg tool feature
 |-----|-----|-----|-----|
 | username | Enter name of a non-root user to configure or none to skip | string | automatic |
 | version | Enter vcpkg version tag or stable or latest | string | stable |
-| vcpkgroot | Enter VCPKGROOT as vcpkg root path | string | automatic |
-| vcpkgdownload | Enter VCPKGDOWNLOAD as vcpkg download path | string | automatic |
+| vcpkgroot | Enter VCPKGROOT as vcpkg root path | string | /usr/local/vcpkg |
+| vcpkgdownload | Enter VCPKGDOWNLOAD as vcpkg download path | string | /usr/local/vcpkg-downloads |
 
 
 
