@@ -9,26 +9,16 @@ set -e
 SETCOLOR_SUCCESS="echo -en \\E[1;32m"
 SETCOLOR_FAILURE="echo -en \\E[1;31m"
 SETCOLOR_WARNING="echo -en \\E[1;33m"
-# SETCOLOR_NORMAL="echo  -en \\E[0;39m"
+SETCOLOR_NORMAL="echo  -en \\E[0;39m"
 
-USERNAME="${USERNAME:-"vscode"}"
-VCPKG_ROOT="${VCPKGROOT:-"automatic"}"
-VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"automatic"}"
+USERNAME="${USERNAME:-"root"}"
+VCPKG_ROOT="${VCPKGROOT:-"/usr/local/vcpkg"}"
+VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"/usr/local/vcpkg-downloads"}"
 VCPKG_VERSION="${VERSION:-"stable"}"
 
 # Set vcpkg root on automatic
 if [ "${USERNAME}" = "none" ] || [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
     USERNAME="root"
-fi
-
-# Set vcpkg root on automatic
-if [ "${VCPKG_ROOT}" = "auto" ] || [ "${VCPKG_ROOT}" = "automatic" ]; then
-    VCPKG_ROOT="/usr/local/vcpkg"
-fi
-
-# Set vcpkg download on automatic
-if [ "${VCPKG_DOWNLOADS}" = "auto" ] || [ "${VCPKG_DOWNLOADS}" = "automatic" ]; then
-    VCPKG_DOWNLOADS="/usr/local/vcpkg-downloads"
 fi
 
 # bionic and stretch pkg repos install cmake version < 3.15 which is required to run bootstrap-vcpkg.sh on ARM64
@@ -63,6 +53,8 @@ updaterc() {
 apt_get_update_if_needed() {
     if [ ! -d "/var/lib/apt/lists" ] || [ "$(find /var/lib/apt/lists/* -prune -print | wc -l)" = "0" ]; then
         echo "Running apt-get update..."
+        cp /etc/apt/sources.list /etc/apt/sources.list.bak
+        sed -i '/^# deb/d;s|http://deb.debian.org/debian|http://mirrors.tencent.com/debian|g;/^deb http/s/$/ contrib non-free/;/-updates/h;s/-updates/-backports/;$G' /etc/apt/sources.list
         apt-get update
     else
         echo "Skipping apt-get update."
@@ -77,10 +69,9 @@ check_packages() {
     fi
 }
 
-export DEBIAN_FRONTEND=noninteractive
 
 # Install additional packages needed by vcpkg: https://github.com/microsoft/vcpkg/blob/master/README.md#installing-linux-developer-tools
-check_packages build-essential tar curl zip unzip pkg-config bash-completion ninja-build git
+check_packages build-essential wget zip unzip pkg-config bash-completion ninja-build git
 
 # Setup group and add user
 umask 0002
@@ -92,7 +83,7 @@ usermod -a -G "vcpkg" "${USERNAME}"
 # Start Installation
 # Clone repository with ports and installer
 if [ -d "${VCPKG_ROOT}" ]; then
-    $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..."
+    $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..." && $SETCOLOR_NORMAL
     rm -rf "${VCPKG_ROOT}"
 fi
 mkdir -p "${VCPKG_DOWNLOADS}"
@@ -109,7 +100,7 @@ clone_args=(--depth=1
 echo VCPKG_VERSION "$VCPKG_VERSION"
 # Setup vcpkg actual version
 if [ "${VCPKG_VERSION}" = "stable" ]; then
-    api_info=$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)
+    api_info="`wget -qO- --no-check-certificate https://api.github.com/repos/microsoft/vcpkg/releases/latest`"
     vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
     echo "$VCPKG_VERSION" "$vcpkg_actual_version"
@@ -144,8 +135,7 @@ chown -R ":vcpkg" "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
 chmod g+r+w+s "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
 chmod -R g+r+w "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
 
-# Enable tab completion for bash and zsh
+# Enable tab completion for bash
 VCPKG_FORCE_SYSTEM_BINARIES=1 su "${USERNAME}" -c "${VCPKG_ROOT}/vcpkg integrate bash"
-VCPKG_FORCE_SYSTEM_BINARIES=1 su "${USERNAME}" -c "${VCPKG_ROOT}/vcpkg integrate zsh"
 
 $SETCOLOR_SUCCESS && echo -e "Install vcpkg successfully."

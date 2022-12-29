@@ -28,19 +28,17 @@
         "vcpkgroot": {
             "type": "string",
             "proposals": [
-                "/usr/local/vcpkg",
-                "automatic"
+                "/usr/local/vcpkg"
             ],
-            "default": "automatic",
+            "default": "/usr/local/vcpkg",
             "description": "Enter VCPKGROOT as vcpkg root path"
         },
         "vcpkgdownload": {
             "type": "string",
             "proposals": [
-                "/usr/local/vcpkg-downloads",
-                "automatic"
+                "/usr/local/vcpkg-downloads"
             ],
-            "default": "automatic",
+            "default": "/usr/local/vcpkg-downloads",
             "description": "Enter VCPKGDOWNLOAD as vcpkg download path"
         }
     }
