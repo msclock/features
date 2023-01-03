@@ -280,4 +280,4 @@ echo -e "\
     PACKAGES_ALREADY_INSTALLED=${PACKAGES_ALREADY_INSTALLED}\n\
     LOCALE_ALREADY_SET=${LOCALE_ALREADY_SET}" > "${MARKER_FILE}"
 
-$SETCOLOR_SUCCESS && echo -e "Install vcpkg successfully."
+$SETCOLOR_SUCCESS && echo -e "Install vcpkg successfully." && $SETCOLOR_NORMAL
