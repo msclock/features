@@ -45,15 +45,15 @@ install_debian_packages() {
     export DEBIAN_FRONTEND=noninteractive
 
     local package_list=(build-essential
-                        curl
-                        ca-certificates
-                        zip 
-                        unzip
-                        procps
-                        pkg-config
-                        bash-completion
-                        ninja-build
-                        git)
+        curl
+        ca-certificates
+        zip
+        unzip
+        procps
+        pkg-config
+        bash-completion
+        ninja-build
+        git)
 
     if ! dpkg -s "${package_list[@]}" >/dev/null 2>&1; then
         apt_get_update_if_needed
@@ -66,7 +66,7 @@ install_debian_packages() {
 # RedHat / RockyLinux / CentOS / Fedora packages
 install_redhat_packages() {
     local install_cmd=dnf
-    if ! type dnf > /dev/null 2>&1; then
+    if ! type dnf >/dev/null 2>&1; then
         install_cmd=yum
     fi
 
@@ -76,15 +76,14 @@ install_redhat_packages() {
     fi
 
     local package_list=(centos-release-scl
-                        ca-certificates
-                        unzip
-                        zip
-                        procps
-                        sudo
-                        sed
-                        grep
-                        which)
-       
+        ca-certificates
+        unzip
+        zip
+        procps
+        sudo
+        sed
+        grep
+        which)
 
     # rockylinux:9 installs 'curl-minimal' which clashes with 'curl'
     # Install 'curl' for every OS except this rockylinux:9
@@ -98,7 +97,7 @@ install_redhat_packages() {
     fi
 
     # Install git if not already installed (may be more recent than distro version)
-    if ! type git > /dev/null 2>&1; then
+    if ! type git >/dev/null 2>&1; then
         package_list+=(git)
     fi
     ${install_cmd} -y install "${package_list[@]}"
@@ -107,7 +106,7 @@ install_redhat_packages() {
 # Alpine Linux packages
 install_alpine_packages() {
     apk update
-    
+
     apk add --no-cache \
         openssh-client \
         autoconf \
@@ -142,11 +141,10 @@ install_alpine_packages() {
         which
 
     # Install git if not already installed (may be more recent than distro version)
-    if ! type git > /dev/null 2>&1; then
+    if ! type git >/dev/null 2>&1; then
         apk add --no-cache git
     fi
 }
-
 
 # ******************
 # ** Main section **
@@ -183,15 +181,15 @@ fi
 # Install packages for appropriate OS
 if [ "${PACKAGES_ALREADY_INSTALLED}" != "true" ]; then
     case "${ADJUSTED_ID}" in
-        "debian")
-            install_debian_packages
-            ;;
-        "rhel")
-            install_redhat_packages
-            ;;
-        "alpine")
-            install_alpine_packages
-            ;;
+    "debian")
+        install_debian_packages
+        ;;
+    "rhel")
+        install_redhat_packages
+        ;;
+    "alpine")
+        install_alpine_packages
+        ;;
     esac
     PACKAGES_ALREADY_INSTALLED="true"
 fi
@@ -205,12 +203,13 @@ usermod -a -G "vcpkg" "${USERNAME}"
 
 # Start Installation
 # Clone repository with ports and installer
-if [ -d "${VCPKG_ROOT}" ]; then
-    $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..." && $SETCOLOR_NORMAL
-    rm -rf "${VCPKG_ROOT}"
-fi
-mkdir -p "${VCPKG_DOWNLOADS}"
-mkdir -p "${VCPKG_ROOT}"
+remove_installation() {
+    if [ -d "${VCPKG_ROOT}" ]; then
+        $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..." && $SETCOLOR_NORMAL
+        rm -rf "${VCPKG_ROOT}"
+    fi
+    mkdir -p "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
+}
 
 clone_args=(--depth=1
     -c core.eol=lf
@@ -225,15 +224,18 @@ echo VCPKG_VERSION "$VCPKG_VERSION"
 if [ "${VCPKG_VERSION}" = "stable" ]; then
     api_info="$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)"
     vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
+    remove_installation
     git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
     echo "$VCPKG_VERSION" "$vcpkg_actual_version"
 elif [ "${VCPKG_VERSION}" = "latest" ]; then
+    remove_installation
     git clone "${clone_args[@]}"
     echo "$VCPKG_VERSION"
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
 
     if echo "${tags}" | grep "${VCPKG_VERSION}" >/dev/null 2>&1; then
+        remove_installation
         echo "Get valid tag" "${VRESION}"
         git clone -b "${VCPKG_VERSION}" "${clone_args[@]}"
         echo "$VCPKG_VERSION"
@@ -278,6 +280,6 @@ if [ ! -d "/usr/local/etc/features/vcpkg" ]; then
 fi
 echo -e "\
     PACKAGES_ALREADY_INSTALLED=${PACKAGES_ALREADY_INSTALLED}\n\
-    LOCALE_ALREADY_SET=${LOCALE_ALREADY_SET}" > "${MARKER_FILE}"
+    LOCALE_ALREADY_SET=${LOCALE_ALREADY_SET}" >"${MARKER_FILE}"
 
 $SETCOLOR_SUCCESS && echo -e "Install vcpkg successfully." && $SETCOLOR_NORMAL
