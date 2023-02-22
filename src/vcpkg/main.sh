@@ -223,10 +223,10 @@ echo VCPKG_VERSION "$VCPKG_VERSION"
 # Setup vcpkg actual version
 if [ "${VCPKG_VERSION}" = "stable" ]; then
     api_info="$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)"
-    vcpkg_actual_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
+    vcpkg_stable_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     remove_installation
-    git clone -b "$vcpkg_actual_version" "${clone_args[@]}"
-    echo "$VCPKG_VERSION" "$vcpkg_actual_version"
+    git clone -b "$vcpkg_stable_version" "${clone_args[@]}"
+    echo "$VCPKG_VERSION" "$vcpkg_stable_version"
 elif [ "${VCPKG_VERSION}" = "latest" ]; then
     remove_installation
     git clone "${clone_args[@]}"

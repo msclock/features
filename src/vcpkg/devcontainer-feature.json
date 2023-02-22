@@ -22,7 +22,7 @@
                 "stable",
                 "latest"
             ],
-            "default": "stable",
+            "default": "latest",
             "description": "Enter vcpkg version tag or stable or latest"
         },
         "vcpkgroot": {
