@@ -214,6 +214,7 @@ remove_installation() {
 clone_args=(--depth=1
     -c core.eol=lf
     -c core.autocrlf=false
+    -c safe.directory="${VCPKG_ROOT}"
     -c fsck.zeroPaddedFilemode=ignore
     -c fetch.fsck.zeroPaddedFilemode=ignore
     -c receive.fsck.zeroPaddedFilemode=ignore
@@ -246,6 +247,9 @@ fi
 ## Run installer to get latest stable vcpkg binary
 ## https://github.com/microsoft/vcpkg/blob/7e7dad5fe20cdc085731343e0e197a7ae655555b/scripts/bootstrap.sh#L126-L144
 "${VCPKG_ROOT}"/bootstrap-vcpkg.sh
+
+# Give an access to repos vcpkg for all users
+git config --system safe.directory "${VCPKG_ROOT}"
 
 # Add to bashrc/zshrc files for all users.
 updaterc() {
