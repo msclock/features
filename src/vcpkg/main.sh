@@ -9,10 +9,40 @@
 
 set -e
 
-SETCOLOR_SUCCESS="echo -en \\E[1;32m"
-SETCOLOR_FAILURE="echo -en \\E[1;31m"
-SETCOLOR_WARNING="echo -en \\E[1;33m"
-SETCOLOR_NORMAL="echo  -en \\E[0;39m"
+_colorize() {
+    case "$1" in
+    "red" | "r")
+        printf '\033[31m'
+        ;;
+    "green" | "g")
+        printf '\033[32m'
+        ;;
+    "yellow" | "y")
+        printf '\033[33m'
+        ;;
+    "blue" | "b")
+        printf '\033[34m'
+        ;;
+    "clear" | "c")
+        printf '\033[0m'
+        ;;
+    esac
+}
+
+die() {
+    echo "$(_colorize r)$*$(_colorize c)" 1>&2
+    exit 10
+}
+info() {
+    echo "$(_colorize b)$*$(_colorize g)" 1>&2
+}
+
+warning() {
+    echo "$(_colorize y)$*$(_colorize c)" 1>&2
+}
+success() {
+    echo "$(_colorize g)$*$(_colorize c)" 1>&2
+}
 
 USERNAME="${USERNAME:-"root"}"
 VCPKG_ROOT="${VCPKGROOT:-"/usr/local/vcpkg"}"
@@ -151,8 +181,7 @@ install_alpine_packages() {
 # ******************
 
 if [ "$(id -u)" -ne 0 ]; then
-    echo -e 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
-    exit 1
+    die 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
 fi
 
 # Load markers to see which steps have already run
@@ -174,8 +203,7 @@ elif [[ "${ID}" = "rhel" || "${ID}" = "fedora" || "${ID}" = "mariner" || "${ID_L
 elif [ "${ID}" = "alpine" ]; then
     ADJUSTED_ID="alpine"
 else
-    $SETCOLOR_FAILURE && echo "Linux distro ${ID} not supported." && $SETCOLOR_NORMAL
-    exit 1
+    die "Linux distro ${ID} not supported."
 fi
 
 # Install packages for appropriate OS
@@ -205,7 +233,7 @@ usermod -a -G "vcpkg" "${USERNAME}"
 # Clone repository with ports and installer
 remove_installation() {
     if [ -d "${VCPKG_ROOT}" ]; then
-        $SETCOLOR_WARNING && echo -e "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..." && $SETCOLOR_NORMAL
+        warning "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..."
         rm -rf "${VCPKG_ROOT}"
     fi
     mkdir -p "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
@@ -286,4 +314,4 @@ echo -e "\
     PACKAGES_ALREADY_INSTALLED=${PACKAGES_ALREADY_INSTALLED}\n\
     LOCALE_ALREADY_SET=${LOCALE_ALREADY_SET}" >"${MARKER_FILE}"
 
-$SETCOLOR_SUCCESS && echo -e "Install vcpkg successfully." && $SETCOLOR_NORMAL
+success "Install vcpkg successfully."

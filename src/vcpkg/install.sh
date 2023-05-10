@@ -9,13 +9,10 @@
 
 set -e
 
-SETCOLOR_FAILURE="echo -en \\E[1;31m"
-SETCOLOR_NORMAL="echo  -en \\E[0;39m"
-
 USERNAME="${USERNAME:-"root"}"
 
 if [ "$(id -u)" -ne 0 ]; then
-    $SETCOLOR_FAILURE && echo 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.' && $SETCOLOR_NORMAL
+    printf "\033[31mFATAL: Script must be run as root. Use sudo, su, or add 'USER root' to your Dockerfile before running this script.\033[0m"
     exit 1
 fi
 
