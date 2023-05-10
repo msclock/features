@@ -30,9 +30,10 @@ _colorize() {
 }
 
 die() {
-    echo "$(_colorize r)$*$(_colorize c)" 1>&2
+    echo "$(_colorize r)FATAL: $(_coloroze y)$*$(_colorize c)" 1>&2
     exit 10
 }
+
 info() {
     echo "$(_colorize b)$*$(_colorize g)" 1>&2
 }
@@ -40,6 +41,7 @@ info() {
 warning() {
     echo "$(_colorize y)$*$(_colorize c)" 1>&2
 }
+
 success() {
     echo "$(_colorize g)$*$(_colorize c)" 1>&2
 }
