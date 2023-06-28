@@ -7,9 +7,11 @@
 #
 # The value of a scenarios element is any properties available in the 'devcontainer.json'.
 # Scenarios are useful for testing specific options in a feature, or to test a combination of features.
-# 
+#
 # This test can be run with the following command (from the root of this repo)
 #    devcontainer features test --global-scenarios-only .
+
+# shellcheck disable=SC1091
 
 set -e
 
@@ -19,7 +21,7 @@ source dev-container-features-test-lib
 # Feature-specific tests
 # The 'check' command comes from the dev-container-features-test-lib.
 check "vcpkg" vcpkg --version
-
+check "gitlab-ci-local" gitlab-ci-local --version
 
 # Report result
 # If any of the checks above exited with a non-zero exit code, the test will fail.

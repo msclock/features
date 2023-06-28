@@ -12,7 +12,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        features: ["vcpkg"]
+        features: ["vcpkg", "gitlab-ci-local"]
         baseImage:
           [
             "ubuntu:focal",

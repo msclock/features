@@ -4,6 +4,8 @@
 # Licensed under the MIT License. See https://github.com/devcontainers/features/blob/main/LICENSE for license information.
 #-------------------------------------------------------------------------------------------------------------------------
 #
+# shellcheck disable=SC1091
+#
 # Docs: https://github.com/msclock/features/blob/main/src/vcpkg
 # Maintainer: msclock
 
@@ -17,7 +19,6 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # If we're using Alpine, install bash before executing
-# shellcheck source=/dev/null
 . /etc/os-release
 if [ "${ID}" = "alpine" ]; then
     apk add --no-cache bash
