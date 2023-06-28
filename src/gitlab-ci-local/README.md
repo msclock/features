@@ -1,7 +1,7 @@
 
 # GitLab CI Local (gitlab-ci-local)
 
-A GitLab local CI tool of running CI pipeline locally.
+A Gitlab CI tool of running CI pipeline locally
 
 ## Example Usage
 
@@ -15,7 +15,11 @@ A GitLab local CI tool of running CI pipeline locally.
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
-| version | Enter gitlab-ci-local version tag or stable or latest | string | latest |
+| version | Enter gitlab-ci-local version tag or latest | string | latest |
+
+## OS Support
+
+This Feature should work on recent versions of Debian/Ubuntu, RedHat Enterprise Linux, Fedora, RockyLinux.
 
 
 ---
