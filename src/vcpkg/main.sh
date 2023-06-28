@@ -4,6 +4,8 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 #
+# shellcheck disable=SC1090,SC1091
+#
 # Docs: https://github.com/msclock/features/blob/main/src/vcpkg
 # Maintainer: msclock
 
@@ -35,7 +37,7 @@ die() {
 }
 
 info() {
-    echo "$(_colorize b)$*$(_colorize g)" 1>&2
+    echo "$(_colorize b)$*$(_colorize c)" 1>&2
 }
 
 warning() {
@@ -61,10 +63,10 @@ fi
 # Run apt-get if needed.
 apt_get_update_if_needed() {
     if [ ! -d "/var/lib/apt/lists" ] || [ "$(find /var/lib/apt/lists/* -prune -print | wc -l)" = "0" ]; then
-        echo "Running apt-get update..."
+        info "Running apt-get update..."
         apt-get update
     else
-        echo "Skipping apt-get update."
+        info "Skipping apt-get update."
     fi
 }
 
@@ -188,14 +190,12 @@ fi
 
 # Load markers to see which steps have already run
 if [ -f "${MARKER_FILE}" ]; then
-    echo "Marker file found:"
+    info "Marker file found:"
     cat "${MARKER_FILE}"
-    # shellcheck source=/dev/null
     source "${MARKER_FILE}"
 fi
 
 # Bring in ID, ID_LIKE, VERSION_ID, VERSION_CODENAME
-# shellcheck source=/dev/null
 . /etc/os-release
 # Get an adjusted ID independant of distro variants
 if [ "${ID}" = "debian" ] || [ "${ID_LIKE}" = "debian" ]; then
@@ -250,28 +250,28 @@ clone_args=(--depth=1
     -c receive.fsck.zeroPaddedFilemode=ignore
     https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
 
-echo VCPKG_VERSION "$VCPKG_VERSION"
+info VCPKG_VERSION "$VCPKG_VERSION"
 # Setup vcpkg actual version
 if [ "${VCPKG_VERSION}" = "stable" ]; then
     api_info="$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)"
     vcpkg_stable_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     remove_installation
     git clone -b "$vcpkg_stable_version" "${clone_args[@]}"
-    echo "$VCPKG_VERSION" "$vcpkg_stable_version"
+    info "$VCPKG_VERSION" "$vcpkg_stable_version"
 elif [ "${VCPKG_VERSION}" = "latest" ]; then
     remove_installation
     git clone "${clone_args[@]}"
-    echo "$VCPKG_VERSION"
+    info "$VCPKG_VERSION"
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
 
     if echo "${tags}" | grep "${VCPKG_VERSION}" >/dev/null 2>&1; then
         remove_installation
-        echo "Get valid tag" "${VRESION}"
+        info "Get valid tag" "${VRESION}"
         git clone -b "${VCPKG_VERSION}" "${clone_args[@]}"
-        echo "$VCPKG_VERSION"
+        info "$VCPKG_VERSION"
     else
-        echo 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
+        die 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
     fi
 fi
 ## Run installer to get latest stable vcpkg binary
@@ -283,7 +283,7 @@ git config --system safe.directory "${VCPKG_ROOT}"
 
 # Add to bashrc/zshrc files for all users.
 updaterc() {
-    echo "Updating /etc/bash.bashrc and /etc/zsh/zshrc..."
+    info "Updating /etc/bash.bashrc and /etc/zsh/zshrc..."
     if [[ "$(cat /etc/bash.bashrc)" != *"$1"* ]]; then
         echo -e "$1" >>/etc/bash.bashrc
     fi
