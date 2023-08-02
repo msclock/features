@@ -14,7 +14,7 @@ set -e
 USERNAME="${USERNAME:-"root"}"
 
 if [ "$(id -u)" -ne 0 ]; then
-    printf "\033[31mFATAL: Script must be run as root. Use sudo, su, or add 'USER root' to your Dockerfile before running this script.\033[0m"
+    printf "\033[31mERROR:\033[0m Script must be run as root. Use sudo, su, or add 'USER root' to your Dockerfile before running this script.\n"
     exit 1
 fi
 

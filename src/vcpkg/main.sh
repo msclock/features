@@ -11,41 +11,32 @@
 
 set -e
 
-_colorize() {
-    case "$1" in
-    "red" | "r")
-        printf '\033[31m'
-        ;;
-    "green" | "g")
-        printf '\033[32m'
-        ;;
-    "yellow" | "y")
-        printf '\033[33m'
-        ;;
-    "blue" | "b")
-        printf '\033[34m'
-        ;;
-    "clear" | "c")
-        printf '\033[0m'
-        ;;
-    esac
-}
+# log with color
+_log() {
+    local level=$1
+    local msg=$2
 
-die() {
-    echo "$(_colorize r)FATAL: $(_coloroze y)$*$(_colorize c)" 1>&2
-    exit 10
-}
+    _colorize() {
+        case "$1" in
+        "red" | "r" | "error")
+            printf '\033[31m'
+            ;;
+        "green" | "g" | "success")
+            printf '\033[32m'
+            ;;
+        "yellow" | "y" | "warning" | "warn")
+            printf '\033[33m'
+            ;;
+        "blue" | "b" | "info")
+            printf '\033[34m'
+            ;;
+        "clear" | "c")
+            printf '\033[0m'
+            ;;
+        esac
+    }
 
-info() {
-    echo "$(_colorize b)$*$(_colorize c)" 1>&2
-}
-
-warning() {
-    echo "$(_colorize y)$*$(_colorize c)" 1>&2
-}
-
-success() {
-    echo "$(_colorize g)$*$(_colorize c)" 1>&2
+    echo "$(_colorize "$level")[$(echo "$1" | tr '[:lower:]' '[:upper:]')]:$(_colorize c) $msg" 1>&2
 }
 
 USERNAME="${USERNAME:-"root"}"
@@ -63,10 +54,10 @@ fi
 # Run apt-get if needed.
 apt_get_update_if_needed() {
     if [ ! -d "/var/lib/apt/lists" ] || [ "$(find /var/lib/apt/lists/* -prune -print | wc -l)" = "0" ]; then
-        info "Running apt-get update..."
+        _log "info" "Running apt-get update..."
         apt-get update
     else
-        info "Skipping apt-get update."
+        _log "info" "Skipping apt-get update."
     fi
 }
 
@@ -185,12 +176,13 @@ install_alpine_packages() {
 # ******************
 
 if [ "$(id -u)" -ne 0 ]; then
-    die 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
+    _log "error" 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
+    exit 1
 fi
 
 # Load markers to see which steps have already run
 if [ -f "${MARKER_FILE}" ]; then
-    info "Marker file found:"
+    _log "info" "Marker file found:"
     cat "${MARKER_FILE}"
     source "${MARKER_FILE}"
 fi
@@ -205,7 +197,8 @@ elif [[ "${ID}" = "rhel" || "${ID}" = "fedora" || "${ID}" = "mariner" || "${ID_L
 elif [ "${ID}" = "alpine" ]; then
     ADJUSTED_ID="alpine"
 else
-    die "Linux distro ${ID} not supported."
+    _log "error" "Linux distro ${ID} not supported."
+    exit 1
 fi
 
 # Install packages for appropriate OS
@@ -235,7 +228,7 @@ usermod -a -G "vcpkg" "${USERNAME}"
 # Clone repository with ports and installer
 remove_installation() {
     if [ -d "${VCPKG_ROOT}" ]; then
-        warning "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..."
+        _log "warning" "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..."
         rm -rf "${VCPKG_ROOT}"
     fi
     mkdir -p "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
@@ -250,28 +243,29 @@ clone_args=(--depth=1
     -c receive.fsck.zeroPaddedFilemode=ignore
     https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
 
-info VCPKG_VERSION "$VCPKG_VERSION"
+_log "info" VCPKG_VERSION "$VCPKG_VERSION"
 # Setup vcpkg actual version
 if [ "${VCPKG_VERSION}" = "stable" ]; then
     api_info="$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)"
     vcpkg_stable_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     remove_installation
     git clone -b "$vcpkg_stable_version" "${clone_args[@]}"
-    info "$VCPKG_VERSION" "$vcpkg_stable_version"
+    _log "info" "$VCPKG_VERSION" "$vcpkg_stable_version"
 elif [ "${VCPKG_VERSION}" = "latest" ]; then
     remove_installation
     git clone "${clone_args[@]}"
-    info "$VCPKG_VERSION"
+    _log "info" "$VCPKG_VERSION"
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
 
     if echo "${tags}" | grep "${VCPKG_VERSION}" >/dev/null 2>&1; then
         remove_installation
-        info "Get valid tag" "${VRESION}"
+        _log "info" "Get valid tag" "${VRESION}"
         git clone -b "${VCPKG_VERSION}" "${clone_args[@]}"
-        info "$VCPKG_VERSION"
+        _log "info" "$VCPKG_VERSION"
     else
-        die 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
+        _log "error" 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
+        exit 1
     fi
 fi
 ## Run installer to get latest stable vcpkg binary
@@ -283,7 +277,7 @@ git config --system safe.directory "${VCPKG_ROOT}"
 
 # Add to bashrc/zshrc files for all users.
 updaterc() {
-    info "Updating /etc/bash.bashrc and /etc/zsh/zshrc..."
+    _log "info" "Updating /etc/bash.bashrc and /etc/zsh/zshrc..."
     if [[ "$(cat /etc/bash.bashrc)" != *"$1"* ]]; then
         echo -e "$1" >>/etc/bash.bashrc
     fi
@@ -316,4 +310,4 @@ echo -e "\
     PACKAGES_ALREADY_INSTALLED=${PACKAGES_ALREADY_INSTALLED}\n\
     LOCALE_ALREADY_SET=${LOCALE_ALREADY_SET}" >"${MARKER_FILE}"
 
-success "Install vcpkg successfully."
+_log "success" "Install vcpkg successfully."

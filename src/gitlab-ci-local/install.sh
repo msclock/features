@@ -5,51 +5,43 @@
 #-------------------------------------------------------------------------------------------------------------
 #
 # shellcheck disable=SC1091
-# 
+#
 # Docs: https://github.com/msclock/features/blob/main/src/gitlab-ci-local
 # Maintainer: msclock
 
 set -e
 
-_colorize() {
-    case "$1" in
-    "red" | "r")
-        printf '\033[31m'
-        ;;
-    "green" | "g")
-        printf '\033[32m'
-        ;;
-    "yellow" | "y")
-        printf '\033[33m'
-        ;;
-    "blue" | "b")
-        printf '\033[34m'
-        ;;
-    "clear" | "c")
-        printf '\033[0m'
-        ;;
-    esac
-}
+# log with color
+_log() {
+    local level=$1
+    local msg=$2
 
-die() {
-    echo "$(_colorize r)FATAL: $(_coloroze y)$*$(_colorize c)" 1>&2
-    exit 10
-}
+    _colorize() {
+        case "$1" in
+        "red" | "r" | "error")
+            printf '\033[31m'
+            ;;
+        "green" | "g" | "success")
+            printf '\033[32m'
+            ;;
+        "yellow" | "y" | "warning" | "warn")
+            printf '\033[33m'
+            ;;
+        "blue" | "b" | "info")
+            printf '\033[34m'
+            ;;
+        "clear" | "c")
+            printf '\033[0m'
+            ;;
+        esac
+    }
 
-info() {
-    echo "$(_colorize b)$*$(_colorize c)" 1>&2
-}
-
-warning() {
-    echo "$(_colorize y)$*$(_colorize c)" 1>&2
-}
-
-success() {
-    echo "$(_colorize g)$*$(_colorize c)" 1>&2
+    echo "$(_colorize "$level")[$(echo "$level" | tr '[:lower:]' '[:upper:]')]:$(_colorize c) $msg" 1>&2
 }
 
 if [ "$(id -u)" -ne 0 ]; then
-    die "FATAL: Script must be run as root. Use sudo, su, or add 'USER root' to your Dockerfile before running this script."
+    _log "error" "Script must be run as root. Use sudo, su, or add 'USER root' to your Dockerfile before running this script."
+    exit 1
 fi
 
 GCL_VERSION="${VERSION:-"latest"}"
@@ -84,10 +76,10 @@ fi
 # Run apt-get if needed.
 apt_get_update_if_needed() {
     if [ ! -d "/var/lib/apt/lists" ] || [ "$(find /var/lib/apt/lists/* -prune -print | wc -l)" = "0" ]; then
-        info "Running apt-get update..."
+        _log "info" "Running apt-get update..."
         apt-get update
     else
-        info "Skipping apt-get update."
+        _log "info" "Skipping apt-get update."
     fi
 }
 
@@ -138,7 +130,6 @@ install_alpine_packages() {
         ca-certificates
 }
 
-
 # Bring in ID, ID_LIKE, VERSION_ID, VERSION_CODENAME
 . /etc/os-release
 # Get an adjusted ID independant of distro variants
@@ -149,7 +140,8 @@ elif [[ "${ID}" = "rhel" || "${ID}" = "fedora" || "${ID}" = "mariner" || "${ID_L
 elif [ "${ID}" = "alpine" ]; then
     ADJUSTED_ID="alpine"
 else
-    die "Linux distro ${ID} not supported."
+    _log "error" "Linux distro ${ID} not supported."
+    exit 1
 fi
 
 # Install packages for appropriate OS
@@ -177,11 +169,11 @@ if [ "$GCL_VERSION" == "latest" ]; then
     GCL_VERSION=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
 fi
 
-info GCL_VERSION "$GCL_VERSION"
+_log "info" GCL_VERSION "$GCL_VERSION"
 
 cd /tmp
 curl -sSL -o linux.gz "https://github.com/firecow/gitlab-ci-local/releases/download/${GCL_VERSION}/linux.gz"
-gzip -dc linux.gz > /usr/local/bin/gitlab-ci-local && rm linux.gz
+gzip -dc linux.gz >/usr/local/bin/gitlab-ci-local && rm linux.gz
 chmod 0755 /usr/local/bin/gitlab-ci-local
 
 # gcl bash completion
@@ -198,4 +190,4 @@ if [ -e "${USERHOME}/.oh_my_zsh" ]; then
     chown -R "${USERNAME}" "${USERHOME}/.oh-my-zsh"
 fi
 
-success "Install gitlab-ci-local successfully."
+_log "success" "Install gitlab-ci-local successfully."
