@@ -1,7 +1,7 @@
 {
   "name": "Vcpkg Tool",
   "id": "vcpkg",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "documentationURL": "https://github.com/msclock/features/tree/main/src/vcpkg",
   "description": "A vcpkg tool feature",
   "options": {
