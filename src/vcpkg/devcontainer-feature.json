@@ -1,46 +1,59 @@
 {
-    "name": "Vcpkg Tool",
-    "id": "vcpkg",
-    "version": "1.2.6",
-    "documentationURL": "https://github.com/msclock/features/tree/main/src/vcpkg",
-    "description": "A vcpkg tool feature",
-    "options": {
-        "username": {
-            "type": "string",
-            "proposals": [
-                "devcontainer",
-                "vscode",
-                "codespace",
-                "none",
-                "automatic"
-            ],
-            "default": "automatic",
-            "description": "Enter name of a non-root user to configure or none to skip"
-        },
-        "vcpkgversion": {
-            "type": "string",
-            "proposals": [
-                "stable",
-                "latest"
-            ],
-            "default": "latest",
-            "description": "Enter vcpkg version tag or stable or latest"
-        },
-        "vcpkgroot": {
-            "type": "string",
-            "proposals": [
-                "/usr/local/vcpkg"
-            ],
-            "default": "/usr/local/vcpkg",
-            "description": "Enter VCPKGROOT as vcpkg root path"
-        },
-        "vcpkgdownload": {
-            "type": "string",
-            "proposals": [
-                "/usr/local/vcpkg-downloads"
-            ],
-            "default": "/usr/local/vcpkg-downloads",
-            "description": "Enter VCPKGDOWNLOAD as vcpkg download path"
-        }
+  "name": "Vcpkg Tool",
+  "id": "vcpkg",
+  "version": "1.2.6",
+  "documentationURL": "https://github.com/msclock/features/tree/main/src/vcpkg",
+  "description": "A vcpkg tool feature",
+  "options": {
+    "username": {
+      "type": "string",
+      "proposals": [
+        "devcontainer",
+        "vscode",
+        "codespace",
+        "none",
+        "automatic"
+      ],
+      "default": "automatic",
+      "description": "Enter name of a non-root user to configure or none to skip"
+    },
+    "vcpkgversion": {
+      "type": "string",
+      "proposals": [
+        "stable",
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Enter vcpkg version tag or stable or latest"
+    },
+    "vcpkgroot": {
+      "type": "string",
+      "proposals": [
+        "/usr/local/vcpkg"
+      ],
+      "default": "/usr/local/vcpkg",
+      "description": "Enter VCPKGROOT as vcpkg root path"
+    },
+    "vcpkgdownload": {
+      "type": "string",
+      "proposals": [
+        "/usr/local/vcpkg-downloads"
+      ],
+      "default": "/usr/local/vcpkg-downloads",
+      "description": "Enter VCPKGDOWNLOAD as vcpkg download path"
     }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "twxs.cmake"
+      ]
+    }
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils",
+    "ghcr.io/devcontainers/features/git"
+  ]
 }

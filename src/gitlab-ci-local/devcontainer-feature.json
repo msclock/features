@@ -1,19 +1,19 @@
 {
-    "name": "GitLab CI Local",
-    "id": "gitlab-ci-local",
-    "version": "0.0.3",
-    "description": "A Gitlab CI tool of running CI pipeline locally",
-    "options": {
-        "version": {
-            "type": "string",
-            "proposals": [
-                "latest"
-            ],
-            "default": "latest",
-            "description": "Enter gitlab-ci-local version tag or latest"
-        }
-    },
-    "installsAfter": [
-        "ghcr.io/devcontainers/features/common-utils"
-    ]
+  "name": "GitLab CI Local",
+  "id": "gitlab-ci-local",
+  "version": "0.0.3",
+  "description": "A Gitlab CI tool of running CI pipeline locally",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Enter gitlab-ci-local version tag or latest"
+    }
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
 }
