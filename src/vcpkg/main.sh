@@ -149,7 +149,6 @@ install_alpine_packages() {
         autoconf \
         build-base \
         binutils \
-        cmake \
         curl \
         file \
         gcc \
@@ -241,7 +240,7 @@ usermod -a -G "vcpkg" "${USERNAME}"
 remove_installation() {
     if [ -d "${VCPKG_ROOT}" ]; then
         _log "warning" "Found a vcpkg distribution folder ${VCPKG_ROOT}. Removing it..."
-        rm -rf "${VCPKG_ROOT}"
+        rm -rf "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
     fi
     mkdir -p "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
 }
@@ -286,6 +285,16 @@ fi
 
 # Give an access to repos vcpkg for all users
 git config --system safe.directory "${VCPKG_ROOT}"
+
+if ! command -v cmake &> /dev/null; then
+    # Download CMake using vcpkg automatically
+    "${VCPKG_ROOT}"/vcpkg install vcpkg-cmake
+
+    # Install CMake and remove archive cache
+    cmake_archive=$(find $VCPKG_ROOT/downloads/ -name cmake*.tar.gz | head -n 1)
+    tar -xzf "$cmake_archive" -C /usr/local/ --strip-components=1
+    rm "$cmake_archive"
+fi
 
 # Add to bashrc/zshrc files for all users.
 updaterc() {
