@@ -14,7 +14,7 @@ set -e
 # log with color
 _log() {
     local level=$1
-    local msg=$2
+    local msg=${*:2}
 
     _colorize() {
         case "$1" in
@@ -255,18 +255,18 @@ clone_args=(--depth=1
     -c receive.fsck.zeroPaddedFilemode=ignore
     https://github.com/microsoft/vcpkg "${VCPKG_ROOT}")
 
-_log "info" VCPKG_VERSION "$VCPKG_VERSION"
+_log "info" "Preset VCPKG_VERSION: $VCPKG_VERSION"
 # Setup vcpkg actual version
 if [ "${VCPKG_VERSION}" = "stable" ]; then
     api_info="$(curl -sX GET https://api.github.com/repos/microsoft/vcpkg/releases/latest)"
     vcpkg_stable_version=$(echo "$api_info" | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||')
     remove_installation
     git clone -b "$vcpkg_stable_version" "${clone_args[@]}"
-    _log "info" "$VCPKG_VERSION" "$vcpkg_stable_version"
+    _log "info" "Using VCPKG_VERSION: $VCPKG_VERSION=$vcpkg_stable_version"
 elif [ "${VCPKG_VERSION}" = "latest" ]; then
     remove_installation
     git clone "${clone_args[@]}"
-    _log "info" "$VCPKG_VERSION"
+    _log "info" "Using VCPKG_VRESION: $VCPKG_VERSION"
 else
     tags=$(git ls-remote --tags https://github.com/microsoft/vcpkg | awk '{ print $2 }' | sed -e 's|refs/tags/||g')
 
@@ -274,7 +274,7 @@ else
         remove_installation
         _log "info" "Get valid tag" "${VRESION}"
         git clone -b "${VCPKG_VERSION}" "${clone_args[@]}"
-        _log "info" "$VCPKG_VERSION"
+        _log "info" "Using VCPKG_VRESION: $VCPKG_VERSION"
     else
         _log "error" 'Need a valid vcpkg tag to install !!! Please see https://github.com/microsoft/vcpkg/tags.'
         exit 1
@@ -315,7 +315,7 @@ chmod -R g+r+w "${VCPKG_ROOT}" "${VCPKG_DOWNLOADS}"
 VCPKG_FORCE_SYSTEM_BINARIES=1 su "${USERNAME}" -c "${VCPKG_ROOT}/vcpkg integrate bash"
 
 # Write marker file
-if [ ! -d "/usr/local/etc/features/vcpkg" ]; then
+if [ ! -d "$MARKER_FILE" ]; then
     mkdir -p "$(dirname "${MARKER_FILE}")"
 fi
 echo -e "\

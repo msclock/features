@@ -14,7 +14,7 @@ set -e
 # log with color
 _log() {
     local level=$1
-    local msg=$2
+    local msg=${*:2}
 
     _colorize() {
         case "$1" in
