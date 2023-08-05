@@ -45,6 +45,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 GCL_VERSION="${VERSION:-"latest"}"
+USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
 
 # Determine the appropriate non-root user
 if [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
