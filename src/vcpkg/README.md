@@ -20,6 +20,14 @@ A vcpkg tool feature
 | vcpkgroot | Enter VCPKGROOT as vcpkg root path | string | /usr/local/vcpkg |
 | vcpkgdownload | Enter VCPKGDOWNLOAD as vcpkg download path | string | /usr/local/vcpkg-downloads |
 
+## Customizations
+
+### VS Code Extensions
+
+- `ms-vscode.cpptools`
+- `ms-vscode.cmake-tools`
+- `twxs.cmake`
+
 ## OS Support
 
 This Feature should work on recent versions of Debian/Ubuntu, RedHat Enterprise Linux, Fedora, RockyLinux, and Alpine Linux.
