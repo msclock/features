@@ -286,12 +286,12 @@ fi
 # Give an access to repos vcpkg for all users
 git config --system safe.directory "${VCPKG_ROOT}"
 
-if ! command -v cmake &> /dev/null; then
+if ! command -v cmake &>/dev/null; then
     # Download CMake using vcpkg automatically
     "${VCPKG_ROOT}"/vcpkg install vcpkg-cmake
 
     # Install CMake and remove archive cache
-    cmake_archive=$(find $VCPKG_ROOT/downloads/ -name cmake*.tar.gz | head -n 1)
+    cmake_archive=$(find "$VCPKG_ROOT"/downloads/ -name 'cmake*.tar.gz' | head -n 1)
     tar -xzf "$cmake_archive" -C /usr/local/ --strip-components=1
     rm "$cmake_archive"
 fi
