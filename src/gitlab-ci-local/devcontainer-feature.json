@@ -1,7 +1,7 @@
 {
   "name": "GitLab CI Local",
   "id": "gitlab-ci-local",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Gitlab CI tool of running CI pipeline locally",
   "options": {
     "version": {
