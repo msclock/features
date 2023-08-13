@@ -36,7 +36,7 @@ _log() {
         esac
     }
 
-    echo "$(_colorize "$level")[$(echo "$level" | tr '[:lower:]' '[:upper:]')]:$(_colorize c) $msg" 1>&2
+    echo "$(_colorize "$level")["${level^^}"]:$(_colorize c) $msg" 1>&2
 }
 
 if [ "$(id -u)" -ne 0 ]; then

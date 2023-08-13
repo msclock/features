@@ -36,7 +36,7 @@ _log() {
         esac
     }
 
-    echo "$(_colorize "$level")[$(echo "$1" | tr '[:lower:]' '[:upper:]')]:$(_colorize c) $msg" 1>&2
+    echo "$(_colorize "$level")["${level^^}"]:$(_colorize c) $msg" 1>&2
 }
 
 USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
