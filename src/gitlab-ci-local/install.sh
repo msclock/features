@@ -16,27 +16,26 @@ _log() {
     local level=$1
     local msg=${*:2}
 
-    _colorize() {
-        case "$1" in
-        "red" | "r" | "error")
-            printf '\033[31m'
-            ;;
-        "green" | "g" | "success")
-            printf '\033[32m'
-            ;;
-        "yellow" | "y" | "warning" | "warn")
-            printf '\033[33m'
-            ;;
-        "blue" | "b" | "info")
-            printf '\033[34m'
-            ;;
-        "clear" | "c")
-            printf '\033[0m'
-            ;;
-        esac
-    }
+    _preset="clear"
+    case "$level" in
+    "red" | "r" | "error")
+        _preset='\033[31m'
+        ;;
+    "green" | "g" | "success")
+        _preset='\033[32m'
+        ;;
+    "yellow" | "y" | "warning" | "warn")
+        _preset='\033[33m'
+        ;;
+    "blue" | "b" | "info")
+        _preset='\033[34m'
+        ;;
+    "clear" | "c")
+        _preset='\033[0m'
+        ;;
+    esac
 
-    echo "$(_colorize "$level")["${level^^}"]:$(_colorize c) $msg" 1>&2
+    echo -e "$_preset["${level^^}"]:\033[0m $msg" 1>&2
 }
 
 if [ "$(id -u)" -ne 0 ]; then
