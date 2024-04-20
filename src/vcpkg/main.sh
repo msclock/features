@@ -311,6 +311,14 @@ updaterc "$(
     cat <<EOF
 export VCPKG_ROOT="${VCPKG_ROOT}"
 if [[ "\${PATH}" != *"\${VCPKG_ROOT}"* ]]; then export PATH="\${VCPKG_ROOT}:\${PATH}"; fi
+# https://github.com/microsoft/vcpkg-tool/blob/2024-03-29/src/vcpkg.cpp#L273C80-L277
+if [[ "\$(uname -m)" == *"arm"* ]] ||
+   [[ "\$(uname -m)" == *"aarch"* ]] ||
+   [[ "\$(uname -m)" == *"riscv"* ]] ||
+   [[ "\$(uname -m)" == "s390x" ]] ||
+   [[ "\$(uname -m)" == *"ppc64"* ]]; then
+    export VCPKG_FORCE_SYSTEM_BINARIES=1
+fi
 EOF
 )"
 
