@@ -88,7 +88,8 @@ install_debian_packages() {
     export DEBIAN_FRONTEND=noninteractive
 
     local package_list=(curl
-        ca-certificates)
+        ca-certificates
+        git)
 
     if ! dpkg -s "${package_list[@]}" >/dev/null 2>&1; then
         apt_get_update_if_needed
@@ -118,6 +119,10 @@ install_redhat_packages() {
         package_list+=(curl)
     fi
 
+    # Install git if not already installed (may be more recent than distro version)
+    if ! type git >/dev/null 2>&1; then
+        package_list+=(git)
+    fi
     ${install_cmd} -y install "${package_list[@]}"
 }
 
@@ -128,6 +133,10 @@ install_alpine_packages() {
     apk add --no-cache \
         curl \
         ca-certificates
+    # Install git if not already installed (may be more recent than distro version)
+    if ! type git >/dev/null 2>&1; then
+        apk add --no-cache git
+    fi
 }
 
 # Bring in ID, ID_LIKE, VERSION_ID, VERSION_CODENAME
