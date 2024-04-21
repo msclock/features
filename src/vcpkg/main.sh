@@ -287,7 +287,7 @@ if [[ "$arch" == *"arm"* ]] ||
    [[ "$arch" == *"riscv"* ]] ||
    [[ "$arch" == "s390x" ]] ||
    [[ "$arch" == *"ppc64"* ]]; then
-    VCPKG_FORCE_SYSTEM_BINARIES=1
+    export VCPKG_FORCE_SYSTEM_BINARIES=1
 fi
 
 ## Run installer to get latest stable vcpkg binary
