@@ -278,6 +278,18 @@ else
         exit 1
     fi
 fi
+
+# https://github.com/microsoft/vcpkg-tool/blob/2024-03-29/src/vcpkg.cpp#L273C80-L277
+arch=$(uname -m)
+
+if [[ "$arch" == *"arm"* ]] ||
+   [[ "$arch" == *"aarch"* ]] ||
+   [[ "$arch" == *"riscv"* ]] ||
+   [[ "$arch" == "s390x" ]] ||
+   [[ "$arch" == *"ppc64"* ]]; then
+    VCPKG_FORCE_SYSTEM_BINARIES=1
+fi
+
 ## Run installer to get latest stable vcpkg binary
 ## https://github.com/microsoft/vcpkg/blob/7e7dad5fe20cdc085731343e0e197a7ae655555b/scripts/bootstrap.sh#L126-L144
 "${VCPKG_ROOT}"/bootstrap-vcpkg.sh
@@ -312,13 +324,7 @@ updaterc "$(
 export VCPKG_ROOT="${VCPKG_ROOT}"
 if [[ "\${PATH}" != *"\${VCPKG_ROOT}"* ]]; then export PATH="\${VCPKG_ROOT}:\${PATH}"; fi
 # https://github.com/microsoft/vcpkg-tool/blob/2024-03-29/src/vcpkg.cpp#L273C80-L277
-if [[ "\$(uname -m)" == *"arm"* ]] ||
-   [[ "\$(uname -m)" == *"aarch"* ]] ||
-   [[ "\$(uname -m)" == *"riscv"* ]] ||
-   [[ "\$(uname -m)" == "s390x" ]] ||
-   [[ "\$(uname -m)" == *"ppc64"* ]]; then
-    export VCPKG_FORCE_SYSTEM_BINARIES=1
-fi
+if [[ -n "$VCPKG_FORCE_SYSTEM_BINARIES" ]]; then export VCPKG_FORCE_SYSTEM_BINARIES=1; fi
 EOF
 )"
 
