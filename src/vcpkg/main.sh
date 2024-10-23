@@ -38,7 +38,7 @@ _log() {
     echo -e "$_preset["${level^^}"]:\033[0m $msg" 1>&2
 }
 
-USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
+USERNAME="${_REMOTE_USER:-"${USERNAME:-"automatic"}"}"
 VCPKG_ROOT="${VCPKGROOT:-"/usr/local/vcpkg"}"
 VCPKG_DOWNLOADS="${VCPKGDOWNLOADS:-"/usr/local/vcpkg-downloads"}"
 VCPKG_VERSION="${VCPKGVERSION:-"stable"}"
