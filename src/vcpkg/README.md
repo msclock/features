@@ -7,7 +7,7 @@ A vcpkg tool feature
 
 ```json
 "features": {
-    "ghcr.io/msclock/features/vcpkg:1": {}
+    "ghcr.io/msclock/features/vcpkg:2": {}
 }
 ```
 
