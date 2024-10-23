@@ -1,0 +1,35 @@
+{
+    "scene_use_existing_user_vscode": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "remoteUser": "vscode",
+        "features": {
+            "vcpkg": {}
+        }
+    },
+    "scene_use_created_user_dummy": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "remoteUser": "dummy",
+        "features": {
+            "ghcr.io/devcontainers/features/common-utils:2": {
+                "username": "dummy"
+            },
+            "vcpkg": {}
+        }
+    },
+    "scene_stable": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "vcpkg": {
+                "vcpkgversion": "stable"
+            }
+        }
+    },
+    "scene_tag": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "vcpkg": {
+                "vcpkgversion": "2024.09.30"
+            }
+        }
+    }
+}
