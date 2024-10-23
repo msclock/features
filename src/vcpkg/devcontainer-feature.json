@@ -1,22 +1,10 @@
 {
   "name": "Vcpkg Tool",
   "id": "vcpkg",
-  "version": "1.3.6",
+  "version": "2.0.0",
   "documentationURL": "https://github.com/msclock/features/tree/main/src/vcpkg",
   "description": "A vcpkg tool feature",
   "options": {
-    "username": {
-      "type": "string",
-      "proposals": [
-        "devcontainer",
-        "vscode",
-        "codespace",
-        "none",
-        "automatic"
-      ],
-      "default": "automatic",
-      "description": "Enter name of a non-root user to configure or none to skip"
-    },
     "vcpkgversion": {
       "type": "string",
       "proposals": [
