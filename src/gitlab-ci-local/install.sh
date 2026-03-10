@@ -180,10 +180,69 @@ fi
 
 _log "info" GCL_VERSION "$GCL_VERSION"
 
+# Function to compare versions
+# Returns 0 if version1 >= version2, 1 otherwise
+version_ge() {
+    local ver1="$1"
+    local ver2="$2"
+    local arr1 arr2
+
+    # Split versions into arrays
+    IFS='.' read -ra arr1 <<< "$ver1"
+    IFS='.' read -ra arr2 <<< "$ver2"
+
+    # Compare each part numerically
+    local i
+    for ((i = 0; i < ${#arr1[@]} || i < ${#arr2[@]}; i++)); do
+        local num1=${arr1[i]:-0}
+        local num2=${arr2[i]:-0}
+
+        # Remove leading zeros for numeric comparison
+        num1=$((10#$num1))
+        num2=$((10#$num2))
+
+        if ((num1 > num2)); then
+            return 0
+        elif ((num1 < num2)); then
+            return 1
+        fi
+    done
+
+    # Versions are equal
+    return 0
+}
+
 cd /tmp
-curl -sSL -o linux.gz "https://github.com/firecow/gitlab-ci-local/releases/download/${GCL_VERSION}/linux.gz"
-gzip -dc linux.gz >/usr/local/bin/gitlab-ci-local && rm linux.gz
-chmod 0755 /usr/local/bin/gitlab-ci-local
+
+# Version 4.66.0 and later use new archive format: gitlab-ci-local-linux-{arch}.tar.gz
+# Earlier versions use the old format: linux.gz
+if version_ge "$GCL_VERSION" "4.66.0"; then
+    # Detect CPU architecture
+    ARCH=$(uname -m)
+    case "$ARCH" in
+        x86_64)
+            GCL_ARCH="amd64"
+            ;;
+        aarch64)
+            GCL_ARCH="arm64"
+            ;;
+        *)
+            _log "error" "Unsupported architecture: $ARCH"
+            exit 1
+            ;;
+    esac
+
+    filename="gitlab-ci-local-linux-${GCL_ARCH}.tar.gz"
+    curl -sSL -o "$filename" "https://github.com/firecow/gitlab-ci-local/releases/download/${GCL_VERSION}/${filename}"
+    tar -xzf "$filename" && rm "$filename"
+    mv gitlab-ci-local /usr/local/bin/gitlab-ci-local
+    chmod 0755 /usr/local/bin/gitlab-ci-local
+else
+    # Old format for versions before 4.66.0
+    curl -sSL -o linux.gz "https://github.com/firecow/gitlab-ci-local/releases/download/${GCL_VERSION}/linux.gz"
+    gzip -dc linux.gz >/usr/local/bin/gitlab-ci-local && rm linux.gz
+    chmod 0755 /usr/local/bin/gitlab-ci-local
+fi
 
 # gcl bash completion
 if [ ! -d "/etc/bash_completion.d" ]; then

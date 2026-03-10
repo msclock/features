@@ -1,9 +1,17 @@
 {
-    "scene_tag": {
+    "gz-assets": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "gitlab-ci-local": {
                 "version": "4.55.0"
+            }
+        }
+    },
+    "tar-gz-assets": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "gitlab-ci-local": {
+                "version": "4.66.0"
             }
         }
     }
